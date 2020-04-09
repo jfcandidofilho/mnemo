@@ -1,0 +1,19 @@
+body {
+    
+    font-size: 12pt;
+    
+    color: #333;
+    
+    font-family: arial, monospace;
+    
+    margin: 0;
+    
+    padding: 0;
+    
+    text-align: center;
+    
+}
+
+#title { font-size: 32pt; color: #33c;}
+
+#mnemo { border: 1px dotted #c3c; }
