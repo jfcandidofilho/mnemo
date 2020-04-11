@@ -136,21 +136,21 @@ function set_backforeground( cards, position ){
 
 }
 
-//
+// 
 function get_backforeground( cards, position ){
 
     return cards[ position ][2];
 
 }
 
-//
+// 
 function get_active_cards(){
 
     return( cards.active );
 
 }
 
-//
+// 
 function set_active_cards( value, index_position = 0, html_position = [] ){
 
     cards.active.number += value;
@@ -163,38 +163,55 @@ function set_active_cards( value, index_position = 0, html_position = [] ){
     
     } else if( value < 0 ){ 
         
-        console.log( 
-            "UNSET active : index_positions", 
-            cards.active.index_positions.splice( 
-                cards.active.index_positions.indexOf( index_position ),
-                1
-            ) 
+        cards.active.index_positions.splice( 
+            cards.active.index_positions.indexOf( index_position ), 1
         );
 
-        console.log( 
-            "UNSET active : html_positions", 
-            cards.active.html_positions.splice( 
-                cards.active.html_positions.indexOf( html_position ),
-                1
-            ) 
+        cards.active.html_positions.splice( 
+            cards.active.html_positions.indexOf( html_position ), 1
         );
 
     } else ;
 
-    console.log( "VAR cards.active: val i l (index)" );
-    console.log( value, index_position, cards.active.index_positions );
+}
 
-    console.log( "VAR cards.active: val i l (html)" );
-    console.log( value, html_position, cards.active.html_positions );
+// 
+function cards_are_paired(){
+
+    var x, y;
+
+    // Only executes if there are more than two cards turned face up
+    if( cards.active.number >= 2 ){
+
+        x = cards.active.index_positions[0];
+        y = cards.active.index_positions[1];
+
+        return cards.shuffled[ x ][0] == cards.shuffled[ y ][0];
+
+    }
 
 }
 
-//
+// 
 function get_paired_cards(){
 
-    console.log( "fn get_paired..", cards.paired.html_position );
-
     return cards.paired;
+
+}
+
+// 
+function set_paired_cards( index, html ){
+
+    if( index >= 0 ) cards.paired.index_position.push( index );
+
+    // In case index < 0, probably the game reseted. Or error.
+    else cards.paired.index_position = [];
+
+
+    if( index >= 0 ) cards.paired.html_position.push( html );
+
+    // In case index < 0, probably the game reseted. Or error.
+    else cards.paired.html_position = [];
 
 }
 
@@ -205,7 +222,7 @@ function update_score( id ){
 
  }
 
-// 
+ // 
 function set_current_score( value ){
 
     score.current += value;
@@ -295,12 +312,8 @@ function start(){
                 var card            = everything.card;
 
                 // Declares active cards variables
-                var position = [];
+                var active = [], index = 0, html = 1, position = [];
                 
-                // DEBUG
-                console.table( get_paired_cards() );
-                console.log( get_paired_cards().index_position );
-
                 // Stops the event if the card is already paired;
                 if( get_paired_cards().index_position.includes( index_position ) ) return ; else ;
 
@@ -333,6 +346,84 @@ function start(){
                 // Set the card based on the side
                 set_card( row, cell, card[1], card[0], side );
 
+                // Remove cards from being actionable if a pair was formed
+                if( get_active_cards().number >= 2 ) {
+
+                    // Defines the index of both active cards
+                    active.push( [ 
+                        
+                        get_active_cards().index_positions[0],
+                        get_active_cards().index_positions[1]
+
+                    ] );
+
+                    // Defines the row and cell of both active cards
+                    active.push( [ 
+                        
+                        get_active_cards().html_positions[0], 
+                        get_active_cards().html_positions[1] 
+
+                    ] );
+
+                    // DEBUG - Show active cards to verify pair
+                    console.log( 
+                        cards.shuffled[ active[ index ][0] ],
+                        cards.shuffled[ active[ index ][1] ]
+                    );
+                
+                    // Paired cards are out
+                    if( cards_are_paired() ){
+
+                        // Stores the indexes and html position of those already paired
+                        set_paired_cards( active[ index ][0], active[ html ][0] );
+                        set_paired_cards( active[ index ][1], active[ html ][1] );
+
+                        // Remove active cards for both paired cards
+                        set_active_cards( -1, active[ index ][1], active[ html ][1] );
+                        set_active_cards( -1, active[ index ][0], active[ html ][0] );
+
+                        // Updates score
+                        set_current_score( 5 );
+                        update_score( "current" );
+
+                    } else { // Turn down the cards if not paired
+
+                        // Updates score
+                        set_current_score( -2 );
+                        update_score( "current" );
+
+                        // Turn down the first cards
+                        set_backforeground( cards.shuffled, active[ index ][0] );
+                        set_card( 
+
+                            active[ html ][0][0], 
+                            active[ html ][0][1], 
+                            cards.shuffled[ active[ index ][0] ][1], 
+                            cards.shuffled[ active[ index ][0] ][0], 
+                            false 
+
+                        );
+
+                        // Turn down the second card (just clicked on)
+                        set_backforeground( cards.shuffled, active[ index ][1] );
+                        set_card( 
+                            
+                            active[ html ][1][0], 
+                            active[ html ][1][1], 
+                            cards.shuffled[ active[ index ][1] ][1], 
+                            cards.shuffled[ active[ index ][1] ][0], 
+                            false 
+                            
+                        );
+
+                        // Remove active cards for both paired cards
+                        set_active_cards( -1, active[ index ][1], active[ html ][1] );
+                        set_active_cards( -1, active[ index ][0], active[ html ][0] );
+
+                    }
+
+                }
+
             };
 
         }
@@ -354,6 +445,7 @@ window.addEventListener(
     "load", 
     function() {
 
+        // Start the game
         start();
     
     }, 
