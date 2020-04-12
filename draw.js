@@ -280,7 +280,7 @@ function set_paired_cards( index, html ){
 }
 
 // Draws the score into the HTML given an ID
-function update_score( id ){
+function draw_score( id ){
 
     document.getElementById( id ).innerHTML = score[ id ];
 
@@ -294,8 +294,8 @@ function set_current_score( value ){
     score.total += value;
 
     // Draws the updated score
-    update_score( "total" );
-    update_score( "current" );
+    draw_score( "total" );
+    draw_score( "current" );
 
 }
 
@@ -338,9 +338,9 @@ function start(){
     // Set the cards faced down
     set_table( false );
 
-    // Sets score;
-    update_score( "total" );
-    update_score( "current" );
+    // Draws score
+    draw_score( "total" );
+    draw_score( "current" );
 
 
     // Add onclick event into every card
@@ -467,9 +467,9 @@ function start(){
                             set_active_cards( -1, active[ index ][1], active[ html ][1] );
                             set_active_cards( -1, active[ index ][0], active[ html ][0] );
 
-                            // Updates score
+                            // Updates and draws the score
                             set_current_score( 5 );
-                            update_score( "current" );
+                            draw_score( "current" );
 
                             // Unlock the locked code
                             lock = false;
@@ -487,9 +487,9 @@ function start(){
                         // Holds code from executing for a period
                         setTimeout( function () {
 
-                            // Updates score
+                            // Updates and draws the score
                             set_current_score( -2 );
-                            update_score( "current" );
+                            draw_score( "current" );
 
                             // Turn down the first cards
                             set_next_faceup_side( cards.shuffled, active[ index ][0] );
