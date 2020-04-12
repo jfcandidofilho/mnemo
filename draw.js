@@ -187,7 +187,7 @@ function set_next_faceup_side( cards, position ){
 }
 
 // Get a cards's next side to be facing up
-function get_backforeground( cards, position ){
+function get_next_faceup_side( cards, position ){
 
     return cards[ position ][2];
 
@@ -396,8 +396,8 @@ function start(){
                 // Turning cards up and down
                 if( get_active_cards().number < 2 ){
 
-                    // Set to turn upside
-                    side = get_backforeground( cards.shuffled, index_position );
+                    // Set the card to turn up
+                    side = get_next_faceup_side( cards.shuffled, index_position );
 
                     // Contabilizes the card
                     set_active_cards( side ? 1 : -1, index_position, position );
@@ -406,7 +406,7 @@ function start(){
                 } else { // Turn the card down since we can't have more than 2 active cards up (!= paired)
                     
                     // Verify if possible to turn card down
-                    if( ! get_backforeground( cards.shuffled, index_position ) ){
+                    if( ! get_next_faceup_side( cards.shuffled, index_position ) ){
 
                         // Set to turn face down
                         side = false;
