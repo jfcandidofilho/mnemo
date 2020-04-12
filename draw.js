@@ -160,8 +160,8 @@ function set_table( cards = null, isFG ){
 
 }
 
-// 
-function get_cards_row( row, cell ){
+// Returns a specific card at a given row and inside a cell
+function get_card_at( row, cell ){
 
     return document.getElementById( "row-" + row ).children[ cell ];
 
@@ -319,7 +319,7 @@ function start(){
     for( row = 0; row < 4; row++ ) for( cell = 0; cell < 5; cell++ ){
 
         // Gets a row of cards to be considered
-        e = get_cards_row( row, cell );
+        e = get_card_at( row, cell );
 
         // Calculates the index that positions the current card
         index_position = ( row * 5 ) + cell;
