@@ -299,6 +299,7 @@ function start(){
     score.current = 0;
     cards.active.number = 0;
     cards.active.index_positions = [];
+    cards.active.html_positions = [];
     cards.paired.index_position = [];
     cards.paired.html_position = [];
     lock = false;
