@@ -25,7 +25,7 @@
             
             </div>
 
-            <div onclick="javascript: start();" class="button">Start Game</div>
+            <div onclick="javascript: start();" class="button">Restart Game</div>
 
         </div>
 
