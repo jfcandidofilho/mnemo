@@ -286,8 +286,8 @@ function draw_score( id ){
 
 }
 
-// Updates the score
-function set_current_score( value ){
+// Updates the score and draws it
+function update_score( value ){
 
     // Updates the score values
     score.current += value;
@@ -468,7 +468,7 @@ function start(){
                             set_active_cards( -1, active[ index ][0], active[ html ][0] );
 
                             // Updates and draws the score
-                            set_current_score( 5 );
+                            update_score( 5 );
                             draw_score( "current" );
 
                             // Unlock the locked code
@@ -488,7 +488,7 @@ function start(){
                         setTimeout( function () {
 
                             // Updates and draws the score
-                            set_current_score( -2 );
+                            update_score( -2 );
                             draw_score( "current" );
 
                             // Turn down the first cards
