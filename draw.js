@@ -125,18 +125,22 @@ function fisher_yates( sorted_array ) {
 
 }
 
-// Set a card into destination
+// Set a card into a destination facing up or down
 function set_card( row, cell, type = "arabic", position = 0, isFG ){
 
+    // Declarations
+    var e, image;
+
     // Selects the destination
-    var e = document.getElementById( "row-" + row ).children[cell];
+    e = document.getElementById( "row-" + row ).children[cell];
 
     // Creates the proper image
-    var image = new Image();
+    image = new Image();
 
+    // Sets the image source
     image.src = image_directory( type, position, isFG );
 
-    // Sets the image
+    // Sets the image into the page
     e.innerHTML = image.outerHTML;
     
 }
@@ -144,16 +148,23 @@ function set_card( row, cell, type = "arabic", position = 0, isFG ){
 // Set the whole table game
 function set_table( cards = null, isFG ){
 
+    // Declarations
     var card;
 
+    // For each card in the matrix
     for( var i = 0; i < 4; i++ ) for( var j = 0; j < 5; j++ ){
 
+        // Checks if the side is the foreground
         if( isFG ) {
             
+            // Get the card at a given position in the matrix
             card = cards[ ( i * 5 ) + j ];
 
+            // Set the card as foreground facing up
             set_card( i, j, card[1], card[0], isFG );
 
+        // The side is the background so where the card is doesn't matter
+        // as all the cards will be facing down (background up)
         } else set_card( i, j, "", 0, isFG );
 
     }
@@ -170,37 +181,45 @@ function get_card_at( row, cell ){
 // Sets a card's next side to be facing up
 function set_next_faceup_side( cards, position ){
 
+    // Inverts the value of the boolean
     cards[ position ][2] = ! cards[ position ][2];
 
 }
 
-// 
+// Get a cards's next side to be facing up
 function get_backforeground( cards, position ){
 
     return cards[ position ][2];
 
 }
 
-// 
+// Get the object listing the active cards
 function get_active_cards(){
 
     return( cards.active );
 
 }
 
-// 
+// Sets (add or remove) a card into the active listing object
 function set_active_cards( value, index_position = 0, html_position = [] ){
 
+    // Number of cards currently active
     cards.active.number += value;
 
+    // If the value is positive, adds the cards into the listing object
     if( value > 0 ) { 
         
         cards.active.index_positions.push( index_position ); 
 
         cards.active.html_positions.push( html_position );
     
+    // If the value is negative (or zero), removes the card from the listing object
     } else if( value < 0 ){ 
         
+        // .splice removes a card given by .indexOf
+        // .indexOf searches for the index of a card into the listing 
+        //                                 (value by refenrece needed)
+
         cards.active.index_positions.splice( 
             cards.active.index_positions.indexOf( index_position ), 1
         );
@@ -213,59 +232,68 @@ function set_active_cards( value, index_position = 0, html_position = [] ){
 
 }
 
-// 
+// Verify if both active cards are paired
 function cards_are_paired(){
 
+    // Declarations
     var x, y;
 
-    // Only executes if there are more than two cards turned face up
+    // Only executes if there are two or more cards turned facing up
     if( cards.active.number >= 2 ){
 
+        // Get the cards to be compared
         x = cards.active.index_positions[0];
         y = cards.active.index_positions[1];
 
+        // Return the results
         return cards.shuffled[ x ][0] == cards.shuffled[ y ][0];
 
     }
 
 }
 
-// 
+// Gets a list of cards already paired
 function get_paired_cards(){
 
     return cards.paired;
 
 }
 
-// 
+// Sets paired cards into the listing that tracks paired cards
 function set_paired_cards( index, html ){
 
-    if( index >= 0 ) cards.paired.index_position.push( index );
+    // Stores the index of the paired card relative to cards.shuffled
+    if( index >= 0 ){
+    
+        // Stores the paired card relative to cards.shuffled        
+        cards.paired.index_position.push( index );
+        cards.paired.html_position.push( html );
 
-    // In case index < 0, probably the game reseted. Or error.
-    else cards.paired.index_position = [];
+    } else { // In case index < 0, probably the game reseted. Or error.
+        
+        // Resets the paired card relative to cards.shuffled  
+        cards.paired.index_position = [];
+        cards.paired.html_position = [];
 
-
-    if( index >= 0 ) cards.paired.html_position.push( html );
-
-    // In case index < 0, probably the game reseted. Or error.
-    else cards.paired.html_position = [];
+    }
 
 }
 
-// 
+// Draws the score into the HTML given an ID
 function update_score( id ){
 
     document.getElementById( id ).innerHTML = score[ id ];
 
 }
 
-// 
+// Updates the score
 function set_current_score( value ){
 
+    // Updates the score values
     score.current += value;
     score.total += value;
 
+    // Draws the updated score
     update_score( "total" );
     update_score( "current" );
 
