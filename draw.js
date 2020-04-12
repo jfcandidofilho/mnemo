@@ -1,3 +1,6 @@
+// Flag to lock actions until set time (card reading)
+var lock = false;
+
 // Defines score
 var score = {
 
@@ -222,7 +225,7 @@ function update_score( id ){
 
  }
 
- // 
+// 
 function set_current_score( value ){
 
     score.current += value;
@@ -264,6 +267,7 @@ function start(){
     cards.active.index_positions = [];
     cards.paired.index_position = [];
     cards.paired.html_position = [];
+    lock = false;
 
     // Randomizes the locations of cards
     cards.shuffled = fisher_yates( JSON.parse( JSON.stringify( cards.ordered ) ) );
@@ -314,6 +318,9 @@ function start(){
                 // Declares active cards variables
                 var active = [], index = 0, html = 1, position = [];
                 
+                // Stops the event if the code is locked
+                if( lock ) return ; else ;
+
                 // Stops the event if the card is already paired;
                 if( get_paired_cards().index_position.includes( index_position ) ) return ; else ;
 
@@ -370,55 +377,77 @@ function start(){
                         cards.shuffled[ active[ index ][0] ],
                         cards.shuffled[ active[ index ][1] ]
                     );
-                
+                    
                     // Paired cards are out
                     if( cards_are_paired() ){
 
-                        // Stores the indexes and html position of those already paired
-                        set_paired_cards( active[ index ][0], active[ html ][0] );
-                        set_paired_cards( active[ index ][1], active[ html ][1] );
+                        // Lock flag to hold code execution
+                        lock = true;
 
-                        // Remove active cards for both paired cards
-                        set_active_cards( -1, active[ index ][1], active[ html ][1] );
-                        set_active_cards( -1, active[ index ][0], active[ html ][0] );
+                        // Holds code from executing for a period
+                        setTimeout( function () {
 
-                        // Updates score
-                        set_current_score( 5 );
-                        update_score( "current" );
+                            // Stores the indexes and html position of those already paired
+                            set_paired_cards( active[ index ][0], active[ html ][0] );
+                            set_paired_cards( active[ index ][1], active[ html ][1] );
+
+                            // Remove active cards for both paired cards
+                            set_active_cards( -1, active[ index ][1], active[ html ][1] );
+                            set_active_cards( -1, active[ index ][0], active[ html ][0] );
+
+                            // Updates score
+                            set_current_score( 5 );
+                            update_score( "current" );
+
+                            // Unlock the locked code
+                            lock = false;
+
+                        }, 100); // Just to avoid missing clicks or wait another player
 
                     } else { // Turn down the cards if not paired
 
-                        // Updates score
-                        set_current_score( -2 );
-                        update_score( "current" );
+                        // Lock flag to hold code execution
+                        lock = true;
 
-                        // Turn down the first cards
-                        set_backforeground( cards.shuffled, active[ index ][0] );
-                        set_card( 
+                        // Holds code from executing for a period
+                        setTimeout( function () {
 
-                            active[ html ][0][0], 
-                            active[ html ][0][1], 
-                            cards.shuffled[ active[ index ][0] ][1], 
-                            cards.shuffled[ active[ index ][0] ][0], 
-                            false 
+                            // Updates score
+                            set_current_score( -2 );
+                            update_score( "current" );
 
-                        );
+                            // Turn down the first cards
+                            set_backforeground( cards.shuffled, active[ index ][0] );
+                            set_card( 
 
-                        // Turn down the second card (just clicked on)
-                        set_backforeground( cards.shuffled, active[ index ][1] );
-                        set_card( 
-                            
-                            active[ html ][1][0], 
-                            active[ html ][1][1], 
-                            cards.shuffled[ active[ index ][1] ][1], 
-                            cards.shuffled[ active[ index ][1] ][0], 
-                            false 
-                            
-                        );
+                                active[ html ][0][0], 
+                                active[ html ][0][1], 
+                                cards.shuffled[ active[ index ][0] ][1], 
+                                cards.shuffled[ active[ index ][0] ][0], 
+                                false 
 
-                        // Remove active cards for both paired cards
-                        set_active_cards( -1, active[ index ][1], active[ html ][1] );
-                        set_active_cards( -1, active[ index ][0], active[ html ][0] );
+                            );
+
+                            // Turn down the second card (just clicked on)
+                            set_backforeground( cards.shuffled, active[ index ][1] );
+                            set_card( 
+                                
+                                active[ html ][1][0], 
+                                active[ html ][1][1], 
+                                cards.shuffled[ active[ index ][1] ][1], 
+                                cards.shuffled[ active[ index ][1] ][0], 
+                                false 
+                                
+                            );
+
+                            // Remove active cards for both paired cards
+                            set_active_cards( -1, active[ index ][1], active[ html ][1] );
+                            set_active_cards( -1, active[ index ][0], active[ html ][0] );
+
+                            // Unlock the locked code
+                            lock = false;
+
+                        }, 1000);
 
                     }
 
