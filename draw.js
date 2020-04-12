@@ -236,17 +236,17 @@ function set_active_cards( value, index_position = 0, html_position = [] ){
 function cards_are_paired(){
 
     // Declarations
-    var x, y;
+    var a, b;
 
     // Only executes if there are two or more cards turned facing up
     if( cards.active.number >= 2 ){
 
         // Get the cards to be compared
-        x = cards.active.index_positions[0];
-        y = cards.active.index_positions[1];
+        a = cards.active.index_positions[0];
+        b = cards.active.index_positions[1];
 
         // Return the results
-        return cards.shuffled[ x ][0] == cards.shuffled[ y ][0];
+        return cards.shuffled[ a ][0] == cards.shuffled[ b ][0];
 
     }
 
