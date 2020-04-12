@@ -1,4 +1,4 @@
-// Flag to lock actions until set time (card reading)
+// Flag to lock actions until set time (for sounds or card reading)
 var lock = false;
 
 // Defines score
@@ -7,6 +7,15 @@ var score = {
     total : 0,
 
     current: 0
+
+};
+
+// Defines sound effect
+var sounds = {
+
+    fail : null,
+
+    success : null
 
 };
 
@@ -60,6 +69,32 @@ var cards = {
     }
 
 };
+
+
+// Object for sound
+function sound( src ) {
+
+    // Creates a sound element
+    this.sound = document.createElement("audio");
+
+    // Defines the source
+    this.sound.src = src;
+
+    // Defines atributes and appearance
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+
+    // Append to body
+    document.body.appendChild(this.sound);
+
+    // Play sound
+    this.play = function(){ this.sound.play(); }
+
+    // Stop sound
+    this.stop = function(){ this.sound.pause(); }
+
+  }
 
 // Gets the directory of an especific image
 function image_directory( type = "arabic", position = 0, isFG ){
@@ -223,13 +258,12 @@ function update_score( id ){
 
     document.getElementById( id ).innerHTML = score[ id ];
 
- }
+}
 
 // 
 function set_current_score( value ){
 
     score.current += value;
-
     score.total += value;
 
     update_score( "total" );
@@ -240,25 +274,25 @@ function set_current_score( value ){
 // Start the game
 function start(){
 
-    // Declarations
+    // DECLARATIONS
 
     // The DIV row of a card
-    var row,
+    var row;
     
     // The cell the cards is located at
-    cell,
+    var cell;
     
     // An HTML element holder for the card
-    e, 
+    var e;
 
     // The position in the randomized list the card is
-    index_position,
+    var index_position;
     
     // Card details
-    card,
+    var card;
     
     // Every thing needed to be throwed into the onclick event function(){}
-    stuff;
+    var stuff;
 
 
     // Sets everything anew
@@ -384,6 +418,9 @@ function start(){
                         // Lock flag to hold code execution
                         lock = true;
 
+                        // Sound: success play
+                        sounds.success.play();
+
                         // Holds code from executing for a period
                         setTimeout( function () {
 
@@ -402,12 +439,15 @@ function start(){
                             // Unlock the locked code
                             lock = false;
 
-                        }, 100); // Just to avoid missing clicks or wait another player
+                        }, 100); // Just to avoid missing clicks or wait another player or sound
 
                     } else { // Turn down the cards if not paired
 
                         // Lock flag to hold code execution
                         lock = true;
+
+                        // Sound: fail play
+                        sounds.fail.play();
 
                         // Holds code from executing for a period
                         setTimeout( function () {
@@ -473,6 +513,10 @@ window.addEventListener(
     
     "load", 
     function() {
+
+        // Load sounds
+        sounds.success  = new sound("./sounds/success.mp3");
+        sounds.fail     = new sound("./sounds/fail.mp3");
 
         // Start the game
         start();
