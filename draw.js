@@ -319,7 +319,18 @@ function update_score( value ){
 
 }
 
-// Start the game
+// Resets everything and starts from the beginning
+function reset(){
+
+    // Resets every score
+    update_score(0);
+
+    // Start a new game
+    start();
+
+}
+
+// Start a new game
 function start(){
 
     // DECLARATIONS
@@ -343,7 +354,7 @@ function start(){
     var stuff;
 
 
-    // Sets everything anew
+    // Sets everything anew except total score
     score.current = 0;
     cards.active.number = 0;
     cards.active.index_positions = [];
