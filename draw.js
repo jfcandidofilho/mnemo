@@ -279,6 +279,26 @@ function set_paired_cards( index, html ){
 
 }
 
+// Sets the score value
+function set_score( value ){
+
+    // If it is zero
+    if( value != 0 ){
+
+        // The game continues and the score is set
+        score.current += value;
+        score.total += value;
+
+    } else { // The game starts anew
+
+        // Resets the score
+        score.current = 0;
+        score.total = 0;
+
+    }
+
+}
+
 // Draws the score into the HTML given an ID
 function draw_score( id ){
 
@@ -286,12 +306,12 @@ function draw_score( id ){
 
 }
 
-// Updates the score and draws it
+// Updates the score and shows it
 function update_score( value ){
 
-    // Updates the score values
-    score.current += value;
-    score.total += value;
+    // Sets the score values
+    set_score( value );
+    set_score( value );
 
     // Draws the updated score
     draw_score( "total" );
@@ -469,7 +489,6 @@ function start(){
 
                             // Updates and draws the score
                             update_score( 5 );
-                            draw_score( "current" );
 
                             // Unlock the locked code
                             lock = false;
@@ -489,7 +508,6 @@ function start(){
 
                             // Updates and draws the score
                             update_score( -2 );
-                            draw_score( "current" );
 
                             // Turn down the first cards
                             set_next_faceup_side( cards.shuffled, active[ index ][0] );
