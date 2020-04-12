@@ -167,8 +167,8 @@ function get_card_at( row, cell ){
 
 }
 
-// 
-function set_backforeground( cards, position ){
+// Sets a card's next side to be facing up
+function set_next_faceup_side( cards, position ){
 
     cards[ position ][2] = ! cards[ position ][2];
 
@@ -373,17 +373,23 @@ function start(){
 
                     // Contabilizes the card
                     set_active_cards( side ? 1 : -1, index_position, position );
-                    set_backforeground( cards.shuffled, index_position );
+                    set_next_faceup_side( cards.shuffled, index_position );
 
-                // Unturn if turned
-                } else if( ! get_backforeground( cards.shuffled, index_position ) ){
+                } else { // Turn the card down since we can't have more than 2 active cards up (!= paired)
+                    
+                    // Verify if possible to turn card down
+                    if( ! get_backforeground( cards.shuffled, index_position ) ){
 
-                    side = false;
+                        // Set to turn face down
+                        side = false;
 
-                    set_active_cards( -1, index_position, position );
-                    set_backforeground( cards.shuffled, index_position );
+                        // Turn down and make it turnable to face up
+                        set_active_cards( -1, index_position, position );
+                        set_next_faceup_side( cards.shuffled, index_position );
 
-                } else ;
+                    } else ; 
+                
+                }
 
                 // Set the card based on the side
                 set_card( row, cell, card[1], card[0], side );
@@ -458,7 +464,7 @@ function start(){
                             update_score( "current" );
 
                             // Turn down the first cards
-                            set_backforeground( cards.shuffled, active[ index ][0] );
+                            set_next_faceup_side( cards.shuffled, active[ index ][0] );
                             set_card( 
 
                                 active[ html ][0][0], 
@@ -470,7 +476,7 @@ function start(){
                             );
 
                             // Turn down the second card (just clicked on)
-                            set_backforeground( cards.shuffled, active[ index ][1] );
+                            set_next_faceup_side( cards.shuffled, active[ index ][1] );
                             set_card( 
                                 
                                 active[ html ][1][0], 
